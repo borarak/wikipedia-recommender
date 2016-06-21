@@ -27,15 +27,20 @@ public class DataPrepMapRed extends Configured implements Tool{
 	}
 	
 	public static class DataMap extends Mapper<LongWritable,Text,TextPairKey,IntWritable>{
+		
+		private static TextPairKey outKey = new TextPairKey();
 		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException{
 			String[] dataTokens = value.toString().split("\t");
 			String id = dataTokens[0];
 			String username = dataTokens[1];
 			String editDate = dataTokens[2];
 			String editedTitle = dataTokens[3];
-			log.info(id + "\t" + editedTitle);
 			
-			context.write(new TextPairKey(id,editedTitle), new IntWritable(1));
+			outKey.setFirstElement(id);
+			outKey.setSecondElement(editedTitle);
+			
+			context.write(outKey, new IntWritable(1));
+			//context.write(new Text(editedTitle + " x"), new IntWritable(1));
 		}
 	}
 	
@@ -45,7 +50,8 @@ public class DataPrepMapRed extends Configured implements Tool{
 			for(IntWritable val:values){
 				editCount += val.get();
 			}
-			context.write(new Text(new String(key.getFirstElement() + "\t" + key.getSecondElement())), new IntWritable(editCount));
+			
+			context.write(new Text(key.getFirstElement().toString() + "\t" + key.getSecondElement().toString()), new IntWritable(editCount));
 			
 		}
 	}
@@ -64,6 +70,8 @@ public class DataPrepMapRed extends Configured implements Tool{
 		job.setMapperClass(DataMap.class);
 		job.setMapOutputKeyClass(TextPairKey.class);
 		job.setMapOutputValueClass(IntWritable.class);
+		
+		job.setNumReduceTasks(2);
 		
 		job.setReducerClass(DataRed.class);
 		job.setOutputKeyClass(Text.class);
