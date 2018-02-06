@@ -8,7 +8,8 @@ The two major steps in this project are first, parsing the Wikipedia user histor
 
 ## Status
 
-COMPLEDTED: XML Parsing and Hadoop Map-Reduce job to prepare training data from Wikipedia dumps.
-PENDING: Implement the ML part.
+**COMPLEDTED**: XML Parsing and Hadoop Map-Reduce job to prepare training data from Wikipedia dumps.
+
+**PENDING**: Implement the ML part.
 
 I haven't had the time to work on this project hopefully i finish it someday (soon!)
